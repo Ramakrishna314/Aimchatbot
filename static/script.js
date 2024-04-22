@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var tags = {
             "participation": ['participate', 'ATL', 'Marathon'],
             "submission": ['submit', 'application', 'ATL Marathon'],
-            "rewards": ['rewards', 'top', 'teams'],
+            "rewards": ['rewards', 'top', 'teams', 'reward'],
             "deadline": ['deadline', 'submitting', 'entries'],
             "certificate": ['participating', 'certificate', 'receive'],
             "multipleEntries": ['team', 'submit', 'entries', 'problem statement'],
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (tags.hasOwnProperty(tag)) {
                 var words = tags[tag];
                 // Check if any word from the tag is present in the message
-                var matchingWords = words.filter(word => message.toLowerCase().includes(word));
+                var matchingWords = words.filter(word => new RegExp("\\b" + word + "\\b", "i").test(message));
                 // If there is a match and it's more specific than the current one, update the most specific tag
                 if (matchingWords.length > 0 && matchingWords.length > mostSpecificWords.length) {
                     mostSpecificTag = tag;
