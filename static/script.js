@@ -69,8 +69,102 @@ document.addEventListener('DOMContentLoaded', function() {
             userInput.value = ''; // Clear user input
             return; // Exit the function
         }
-    
+         
+
         displayUserMessage(message);
+        var tags = {
+            "participation": ['participate', 'ATL', 'Marathon'],
+            "submission": ['submit', 'application', 'ATL Marathon'],
+            "rewards": ['rewards', 'top', 'teams'],
+            "deadline": ['deadline', 'submitting', 'entries'],
+            "certificate": ['participating', 'certificate', 'receive'],
+            "multipleEntries": ['team', 'submit', 'entries', 'problem statement'],
+            "teamLimit": ['limit', 'number', 'participate', 'school'],
+            "requiredDocuments": ['documents', 'required', 'online', 'application', 'submission'],
+            "support": ['support', 'student teams'],
+            "teamComposition": ['composition', 'team', 'ideal'],
+            "individualEntry": ['individual', 'member', 'entry', 'allowed'],
+            "specialCertificates": ['special', 'certificates', 'high number', 'participating', 'teams'],
+            "submitIdea": ['submit', 'idea']
+            // Add more tags and related words as needed
+        };
+        var mostSpecificTag = null;
+        var mostSpecificWords = [];
+
+        for (var tag in tags) {
+            if (tags.hasOwnProperty(tag)) {
+                var words = tags[tag];
+                // Check if any word from the tag is present in the message
+                var matchingWords = words.filter(word => message.toLowerCase().includes(word));
+                // If there is a match and it's more specific than the current one, update the most specific tag
+                if (matchingWords.length > 0 && matchingWords.length > mostSpecificWords.length) {
+                    mostSpecificTag = tag;
+                    mostSpecificWords = matchingWords;
+                }
+            }
+        }
+        if (mostSpecificTag !== null) {
+            switch (mostSpecificTag) {
+                case "participation":
+                    displayBotMessage("Students from both ATL and Non-ATL schools are eligible to participate. Non-ATL schools can collaborate with ATL schools to form teams.");
+                    displayFeedbackMessage();
+                    break;
+                case "submission":
+                    displayBotMessage("You can submit your application in your student profile.");
+                    displayFeedbackMessage();
+                    break;
+                case "rewards":
+                    displayBotMessage("The top teams will receive internships through the Student Innovator Program with leading corporates of India, certificates from AIM, NITI Aayog, and many more interesting opportunities at the conclusion of the Marathon.");
+                    displayFeedbackMessage();
+                    break;
+                case "deadline":
+                    displayBotMessage("The last date to submit entries is 26th January 2024, 11:59 PM.");
+                    displayFeedbackMessage();
+                    break; 
+                case "certificate":
+                    displayBotMessage("Yes, all participating students will receive a certificate of Participation from AIM, NITI Aayog.");
+                    displayFeedbackMessage();
+                    break;
+                case "multipleEntries":
+                    displayBotMessage("Yes, a team may submit entries for more than one problem statement. However, a separate application form must be filled out for each problem statement.");
+                    displayFeedbackMessage();
+                    break;
+                case "teamLimit":
+                    displayBotMessage("No, there is no limit. Maximum number of teams from every school is encouraged.");
+                    displayFeedbackMessage();
+                    break; 
+                case "requiredDocuments":
+                    displayBotMessage("The online application form submission will include a Research Document (description of the innovation/solution) and a Video submission (capturing a 360-degree view of the working prototype/solution).");
+                    displayFeedbackMessage();
+                    break; 
+                case "support":
+                    displayBotMessage("ATL In-Charge, School Teachers, Mentors of Change, Alumni, and external mentors from the local ATL ecosystem may support the student teams.");
+                    break; 
+                case "teamComposition":
+                    displayBotMessage("Each team should consist of a maximum of 3 students (class 6th to 12th). ATL schools are encouraged to include other school and/or community students in the team composition.");
+                    displayFeedbackMessage();
+                    break; 
+                case "individualEntry":
+                    displayBotMessage("No, individual member entry is not allowed. Teams must consist of a minimum of 2 members.");
+                    displayFeedbackMessage();
+                    break; 
+                case "specialCertificates":
+                    displayBotMessage("Yes, special certificates from AIM, NITI Aayog will be given to all schools that have more than 25 teams participating in ATL Marathon.");
+                    displayFeedbackMessage();
+                    break;
+                case "submitIdea":
+                    displayBotMessage("Before submitting your idea, ensure it's well thought out and clearly articulated. Consider its feasibility, potential impact, and any unique aspects. <a href='https://youtu.be/HufI5CnhkfU' target='_blank'>Click here</a> for detailed info");
+                    displayFeedbackMessage();
+                    break;                      
+                // Add more cases for other tags as needed
+                default:
+                    break;
+            }
+            userInput.value = ''; // Clear user input
+            return; // Exit the function
+        }
+
+    
     
         // Send user input to the server for processing
         fetch('/send-message', {
@@ -142,21 +236,89 @@ document.addEventListener('DOMContentLoaded', function() {
     
    
     function displayOptions() {
-        displayOption('Login');
-        displayOption('Register');
-        displayOption('Faqs');
-        displayOption('AboutUs');
-        
-
-        
+        const options = ['Login', 'Register', 'Faqs', 'AboutUs']; // List of options
+        var firstOption = true; // Flag to track the first option
+    
+        options.forEach(function(optionText) {
+            var optionContainer = document.createElement('div');
+            optionContainer.classList.add('option-container');
+    
+            var optionElement = document.createElement('div');
+            optionElement.textContent = optionText;
+            optionElement.classList.add('option');
+    
+            if (firstOption) {
+                optionElement.style.marginLeft = '30px'; // Apply left margin only to the first option
+                firstOption = false; // Reset flag after applying margin once
+            }
+    
+            optionElement.addEventListener('click', function() {
+                displayUserMessage(optionText);
+                setTimeout(function() {
+                    fetchBotResponse(optionText);
+                }, 500);
+            });
+    
+            optionElement.addEventListener('mouseover', function() {
+                optionElement.style.backgroundColor = 'crimson';
+                optionElement.style.color = 'white';
+            });
+    
+            optionElement.addEventListener('mouseout', function() {
+                optionElement.style.backgroundColor = 'white';
+                optionElement.style.color = 'crimson';
+            });
+    
+            optionContainer.appendChild(optionElement);
+            chatBox.appendChild(optionContainer);
+        });
+    
+        chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom of the chat box
     }
+    
     
    
     function displaySuboptions() {
-       displayOption('Student');
-       displayOption('Teacher');
-    }
+        const subOptions = ['Student', 'Teacher']; // List of sub-options
+        var firstOption = true; // Flag to check if it's the first sub-option
     
+        subOptions.forEach(function(optionText) {
+            var optionContainer = document.createElement('div');
+            optionContainer.classList.add('option-container');
+    
+            var optionElement = document.createElement('div');
+            optionElement.textContent = optionText;
+            optionElement.classList.add('option');
+    
+            if (firstOption) {
+                optionElement.style.marginLeft = '30px'; // Apply left margin only to the first option
+                firstOption = false; // Reset flag after applying margin once
+            }
+    
+            optionElement.addEventListener('click', function() {
+                displayUserMessage(optionText);
+                setTimeout(function() {
+                    fetchBotResponse(optionText);
+                }, 500);
+            });
+    
+    
+            optionElement.addEventListener('mouseover', function() {
+                optionElement.style.backgroundColor = 'crimson';
+                optionElement.style.color = 'white';
+            });
+    
+            optionElement.addEventListener('mouseout', function() {
+                optionElement.style.backgroundColor = 'white';
+                optionElement.style.color = 'crimson';
+            });
+    
+            optionContainer.appendChild(optionElement);
+            chatBox.appendChild(optionContainer);
+        });
+    
+        chatBox.scrollTop = chatBox.scrollHeight; // Ensure the chat box scrolls to display the latest added elements
+    }
     
 
     function displayUserMessage(message) {
@@ -214,6 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Append the container to the chat box
         chatBox.appendChild(messageContainer);
         chatBox.scrollTop = chatBox.scrollHeight;
+        
     }
     
     function displayFeedbackMessage() {
@@ -260,6 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayOption(optionText) {
         var optionContainer = document.createElement('div');
         optionContainer.classList.add('option-container');
+        optionContainer.style.marginLeft = '30px'
     
         var optionElement = document.createElement('div');
         optionElement.textContent = optionText;
@@ -341,8 +505,6 @@ document.addEventListener('DOMContentLoaded', function() {
                displayFeedbackMessage();
             }, 500);
         } 
-        
-        
       
     
     }
@@ -363,6 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Display options for "Yes" and "No"
         var optionContainer = document.createElement('div');
         optionContainer.classList.add('option-container');
+        optionContainer.style.marginLeft = '30px';
     
         // Option for "Yes"
         var yesOptionElement = document.createElement('div');
@@ -410,57 +573,4 @@ document.addEventListener('DOMContentLoaded', function() {
         chatBox.appendChild(optionContainer);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-    function displayOptionsAfterExaminationOptions() {
-        // Display options for "Yes" and "No"
-        var optionContainer = document.createElement('div');
-        optionContainer.classList.add('option-container');
-    
-        // Option for "Yes"
-        var yesOptionElement = document.createElement('div');
-        yesOptionElement.textContent = 'Yes';
-        yesOptionElement.classList.add('option');
-        yesOptionElement.addEventListener('click', function() {
-            displayUserMessage('Yes');
-            // Call the function to send the greeting message and display options
-            sendGreetingMessage();
-        });
-        // Add event listener for hover effect
-        yesOptionElement.addEventListener('mouseenter', function() {
-            yesOptionElement.style.backgroundColor = 'crimson';
-            yesOptionElement.style.color = 'white';
-        });
-        // Remove hover effect when mouse leaves
-        yesOptionElement.addEventListener('mouseleave', function() {
-            yesOptionElement.style.backgroundColor = 'white';
-            yesOptionElement.style.color = 'crimson';
-        });
-        optionContainer.appendChild(yesOptionElement);
-    
-        // Option for "No"
-        var noOptionElement = document.createElement('div');
-        noOptionElement.textContent = 'No';
-        noOptionElement.classList.add('option');
-        noOptionElement.addEventListener('click', function() {
-            displayUserMessage('No');
-            // Display farewell message
-            displayBotMessage('Thanks for visiting the chatbot. Feel free to ask questions.', false);
-        });
-        // Add event listener for hover effect
-        noOptionElement.addEventListener('mouseenter', function() {
-            noOptionElement.style.backgroundColor = 'crimson';
-            noOptionElement.style.color = 'white';
-        });
-        // Remove hover effect when mouse leaves
-        noOptionElement.addEventListener('mouseleave', function() {
-            noOptionElement.style.backgroundColor = 'white';
-            noOptionElement.style.color = 'crimson';
-        });
-        optionContainer.appendChild(noOptionElement);
-    
-        // Append options container to the chat box
-        chatBox.appendChild(optionContainer);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-   
- 
 });
